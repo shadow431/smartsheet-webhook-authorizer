@@ -16,7 +16,7 @@ def handler(event:, context:)
   #ssFormUser = ENV['ssFormUser']
   request = event
   data = request #.body.read
-  $logger.debug data
+#  $logger.debug data
   case request.http.method
   when 'POST'
     pData = JSON.parse(data)
