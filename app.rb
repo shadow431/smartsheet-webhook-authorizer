@@ -50,7 +50,6 @@ def handler(event:, context:)
     $logger.info "IDK IDC"
     [404, {}, ["Did you get lost?\n"]]
   end
-=end
 end
 
 def calcHmac(key,data)
