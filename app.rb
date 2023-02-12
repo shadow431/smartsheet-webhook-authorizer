@@ -13,7 +13,6 @@ def handler(event:, context:)
   responseHeader = 'Smartsheet-Hook-Response'
   hmacHeader = 'HTTP_Smartsheet-Hmac-SHA256'.upcase.gsub('-','_')
   sharedSecret = ENV['sharedSecret']
-  #ssFormUser = ENV['ssFormUser']
   request = event
   data = request #.body.read
 #  $logger.debug data
@@ -29,19 +28,13 @@ def handler(event:, context:)
       if request.get_header(hmacHeader) != calcHmac(sharedSecret,data)
         $logger.info "Access Denied - Bad HMAC"
         [403, {"Content-Type" => "application/json"}, ["{\"Response\": \"Not Authorized!!! GO AWAY!!!!\"}\n"]]
-            else
-        if "#{pData['events'][0]['userId']}" == "#{ssFormUser}"
-          $logger.info "Moving Rows"
-          [200, {"Content-Type" => "application/json"}, ["{\"Moved\": \"#{budgetAPI.mvItems.length} Rows\"}\n"]]
-              else
-          $logger.info "#{pData['events'][0]['userId']} not A form User (#{ssFormUser})"
-                [200, {"Content-Type" => "application/json"}, ["{\"Action\": \"Nothing to Do\"}"]]
-              end
+      else
+        $logger.info "Setting event"
+        [200, {"Content-Type" => "application/json"}, ["{\"Event created\": \"#{event}\"}\n"]]
       end
     else
       $logger.info "Access Denied - No Header"
       [403, {"Content-Type" => "application/json"}, ["{\"Response\": \"Not Authorized!!! GO AWAY!!!!\"}\n"]]
-      #[200, {"Content-Type" => "text/plain"}, [request.each_header.map{|k,v|"#{k},#{v}"}.join("\n")]]
     end
   when 'GET'
     $logger.info "Access Denied - GET"
@@ -60,7 +53,7 @@ def calcHmac(key,data)
 end
 
 def placeEvent()
-  return
+  return "I didn't do anything"
 end
 =begin
 {
