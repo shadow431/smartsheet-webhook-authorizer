@@ -20,12 +20,12 @@ def handler(event:, context:)
   when 'POST'
     pData = JSON.parse(data)
     $logger.info "POST"
-    if request.has_key?(challengeHeader)
+    if request['headers'].has_key?(challengeHeader)
       $logger.info "Challege Request"
-      [200, {"Content-Type" => "text/plain", "#{responseHeader}" => "#{request.[challengeHeader]}"}, []]
-    elsif request.has_key?(hmacHeader)
+      [200, {"Content-Type" => "text/plain", "#{responseHeader}" => "#{request['headers'][challengeHeader]}"}, []]
+    elsif request['headers'].has_key?(hmacHeader)
       $logger.info "Has HMAC"
-      if request[hmacHeader] != calcHmac(sharedSecret,data)
+      if request['headers'][hmacHeader] != calcHmac(sharedSecret,data)
         $logger.info "Access Denied - Bad HMAC"
         [403, {"Content-Type" => "application/json"}, ["{\"Response\": \"Not Authorized!!! GO AWAY!!!!\"}\n"]]
       else
