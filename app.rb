@@ -9,9 +9,9 @@ $logger.level = Logger::DEBUG
 
 def handler(event:, context:)
   $logger.debug event
-  challengeHeader = 'HTTP_Smartsheet-Hook-Challenge'.downcase.gsub('-','_')
+  challengeHeader = 'Smartsheet-Hook-Challenge'.downcase.gsub('-','_')
   responseHeader = 'Smartsheet-Hook-Response'
-  hmacHeader = 'HTTP_Smartsheet-Hmac-SHA256'.downcase.gsub('-','_')
+  hmacHeader = 'Smartsheet-Hmac-SHA256'.downcase.gsub('-','_')
   sharedSecret = ENV['sharedSecret']
   request = event
   data = request['body']
