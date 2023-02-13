@@ -14,18 +14,18 @@ def handler(event:, context:)
   hmacHeader = 'HTTP_Smartsheet-Hmac-SHA256'.upcase.gsub('-','_')
   sharedSecret = ENV['sharedSecret']
   request = event
-  data = request #.body.read
+  data = request['body']
 #  $logger.debug data
-  case request.http.method
+  case request['http']['method']
   when 'POST'
     pData = JSON.parse(data)
     $logger.info "POST"
-    if request.has_header?(challengeHeader)
+    if request.has_key?(challengeHeader)
       $logger.info "Challege Request"
-      [200, {"Content-Type" => "text/plain", "#{responseHeader}" => "#{request.get_header(challengeHeader)}"}, []]
-    elsif request.has_header?(hmacHeader)
+      [200, {"Content-Type" => "text/plain", "#{responseHeader}" => "#{request.[challengeHeader]}"}, []]
+    elsif request.has_key?(hmacHeader)
       $logger.info "Has HMAC"
-      if request.get_header(hmacHeader) != calcHmac(sharedSecret,data)
+      if request[hmacHeader] != calcHmac(sharedSecret,data)
         $logger.info "Access Denied - Bad HMAC"
         [403, {"Content-Type" => "application/json"}, ["{\"Response\": \"Not Authorized!!! GO AWAY!!!!\"}\n"]]
       else
