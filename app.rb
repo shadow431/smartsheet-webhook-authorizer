@@ -16,16 +16,16 @@ def handler(event:, context:)
   request = event
   data = request['body']
 #  $logger.debug data
-  case request['http']['method']
+  case request['requestContext']['http']['method']
   when 'POST'
     pData = JSON.parse(data)
     $logger.info "POST"
-    if request['headers'].has_key?(challengeHeader)
+    if request['requestContext']['headers'].has_key?(challengeHeader)
       $logger.info "Challege Request"
-      [200, {"Content-Type" => "text/plain", "#{responseHeader}" => "#{request['headers'][challengeHeader]}"}, []]
-    elsif request['headers'].has_key?(hmacHeader)
+      [200, {"Content-Type" => "text/plain", "#{responseHeader}" => "#{request['requestContext']['headers'][challengeHeader]}"}, []]
+    elsif request['requestContext']['headers'].has_key?(hmacHeader)
       $logger.info "Has HMAC"
-      if request['headers'][hmacHeader] != calcHmac(sharedSecret,data)
+      if request['requestContext']['headers'][hmacHeader] != calcHmac(sharedSecret,data)
         $logger.info "Access Denied - Bad HMAC"
         [403, {"Content-Type" => "application/json"}, ["{\"Response\": \"Not Authorized!!! GO AWAY!!!!\"}\n"]]
       else
