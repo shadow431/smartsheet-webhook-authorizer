@@ -23,26 +23,26 @@ def handler(event:, context:)
     $logger.debug request['headers']
     if request['headers'].has_key?(challengeHeader)
       $logger.info "Challege Request"
-      [200, {"Content-Type" => "text/plain", "#{responseHeader}" => "#{request['headers'][challengeHeader]}"}, []]
+      {'statusCode' => 200, 'headers' => {"Content-Type" => "text/plain", "#{responseHeader}" => "#{request['headers'][challengeHeader]}"}, 'body' => ""}
     elsif request['headers'].has_key?(hmacHeader)
       $logger.info "Has HMAC"
       if request['headers'][hmacHeader] != calcHmac(sharedSecret,data)
         $logger.info "Access Denied - Bad HMAC"
-        [403, {"Content-Type" => "application/json"}, ["{\"Response\": \"Not Authorized!!! GO AWAY!!!!\"}\n"]]
+        {'statusCode' => 403, 'headers' => {"Content-Type" => "application/json"}, 'body' => {"Response" => "Not Authorized!!! GO AWAY!!!!"}.to_json }
       else
         $logger.info "Setting event"
-        [200, {"Content-Type" => "application/json"}, ["{\"Event created\": \"#{event}\"}\n"]]
+        {'statusCode' => 200, 'headers' => {"Content-Type" => "application/json"}, 'body' => {"Response" => "Event created"}.to_json }
       end
     else
       $logger.info "Access Denied - No Header"
-      [403, {"Content-Type" => "application/json"}, ["{\"Response\": \"Not Authorized!!! GO AWAY!!!!\"}\n"]]
+      {'statusCode' => 403, 'headers' => {"Content-Type" => "application/json"}, 'body' => {"Response": "Not Authorized!!! GO AWAY!!!!"}.to_json }
     end
   when 'GET'
     $logger.info "Access Denied - GET"
-    [403, {"Content-Type" => "application/json"}, ["{\"Response\": \"Not Authorized!!! GO AWAY!!!!\"}\n"]]
+    {'statusCode' => 403, 'headers' => {"Content-Type" => "application/json"},  'body' => {"Response": "Not Authorized!!! GO AWAY!!!!"}.to_json }
   else
     $logger.info "IDK IDC"
-    [404, {}, ["Did you get lost?\n"]]
+    {'statusCode' => 404, 'headers' => {}, 'body' => {"Response": "Did you get lost?"}.to_json }
   end
 end
 
