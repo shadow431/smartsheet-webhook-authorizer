@@ -20,6 +20,7 @@ def handler(event:, context:)
   when 'POST'
     pData = JSON.parse(data)
     $logger.info "POST"
+    $logger.debug request['headers']
     if request['headers'].has_key?(challengeHeader)
       $logger.info "Challege Request"
       [200, {"Content-Type" => "text/plain", "#{responseHeader}" => "#{request['headers'][challengeHeader]}"}, []]
