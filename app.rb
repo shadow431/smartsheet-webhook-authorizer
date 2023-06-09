@@ -60,7 +60,7 @@ def placeEvent(data)
   #publish data to an event bus
   $logger.debug "Placing event"
 
-  eventbridge = Aws::EventBridge::Client.new(region: ENV['region'])
+  eventbridge = Aws::EventBridge::Client.new()
   $logger.debug eventbridge.put_events({entries: [{source: 'smartsheet', detail_type: 'smartsheet', detail: data, event_bus_name: ENV['eventBusName']}]})
 
   return "I didn't do anything"
