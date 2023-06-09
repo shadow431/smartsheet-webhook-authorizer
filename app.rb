@@ -3,6 +3,8 @@ Dotenv.load
 require 'openssl'
 require 'logger'
 require 'json'
+require 'aws-sdk-eventbridge'
+
 
 $logger = Logger.new(STDOUT)
 $logger.level = Logger::DEBUG
@@ -31,6 +33,7 @@ def handler(event:, context:)
         {'statusCode' => 403, 'headers' => {"Content-Type" => "application/json"}, 'body' => {"Response" => "Not Authorized!!! GO AWAY!!!!"}.to_json }
       else
         $logger.info "Setting event"
+        placeEvent(data)
         {'statusCode' => 200, 'headers' => {"Content-Type" => "application/json"}, 'body' => {"Response" => "Event created"}.to_json }
       end
     else
@@ -53,6 +56,12 @@ def calcHmac(key,data)
   return hmac
 end
 
-def placeEvent()
+def placeEvent(data)
+  #publish data to an event bus
+  $logger.debug "Placing event"
+
+  eventbridge = Aws::EventBridge::Client.new(region: ENV['region'])
+  $logger.debug eventbridge.put_events({entries: [{source: 'smartsheet', detail_type: 'smartsheet', detail: data, event_bus_name: ENV['eventBusName']}]})
+
   return "I didn't do anything"
 end
